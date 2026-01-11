@@ -1,4 +1,4 @@
-import { Check, Heart, Shield, RefreshCcw, Inbox, X } from "lucide-react";
+import { Heart, Shield, RefreshCcw, Inbox } from "lucide-react";
 
 const benefits = [
   {
@@ -39,7 +39,7 @@ const Benefits = () => {
           </div>
 
           {/* Benefits grid */}
-          <div className="grid sm:grid-cols-2 gap-6 mb-16">
+          <div className="grid sm:grid-cols-2 gap-6">
             {benefits.map((benefit) => (
               <div
                 key={benefit.title}
@@ -58,71 +58,6 @@ const Benefits = () => {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Comparison */}
-          <div className="bg-card rounded-2xl border border-border p-6 sm:p-8">
-            <h3 className="font-serif text-2xl font-semibold text-foreground mb-6 text-center">
-              How we compare
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-4 pr-4 font-medium text-foreground">Feature</th>
-                    <th className="text-center py-4 px-4 font-medium text-primary">Daily Highlights</th>
-                    <th className="text-center py-4 pl-4 font-medium text-muted-foreground">Readwise</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm sm:text-base">
-                  <tr className="border-b border-border/50">
-                    <td className="py-4 pr-4 text-muted-foreground">Price</td>
-                    <td className="py-4 px-4 text-center">
-                      <span className="inline-flex items-center gap-1 text-primary font-semibold">
-                        <Check className="w-4 h-4" /> Free
-                      </span>
-                    </td>
-                    <td className="py-4 pl-4 text-center text-muted-foreground">$5.59-$9.99/mo</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-4 pr-4 text-muted-foreground">Daily email digests</td>
-                    <td className="py-4 px-4 text-center">
-                      <Check className="w-5 h-5 text-primary mx-auto" />
-                    </td>
-                    <td className="py-4 pl-4 text-center">
-                      <Check className="w-5 h-5 text-muted-foreground mx-auto" />
-                    </td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-4 pr-4 text-muted-foreground">Spaced repetition</td>
-                    <td className="py-4 px-4 text-center">
-                      <Check className="w-5 h-5 text-primary mx-auto" />
-                    </td>
-                    <td className="py-4 pl-4 text-center">
-                      <Check className="w-5 h-5 text-muted-foreground mx-auto" />
-                    </td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-4 pr-4 text-muted-foreground">No app required</td>
-                    <td className="py-4 px-4 text-center">
-                      <Check className="w-5 h-5 text-primary mx-auto" />
-                    </td>
-                    <td className="py-4 pl-4 text-center">
-                      <X className="w-5 h-5 text-muted-foreground/50 mx-auto" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 pr-4 text-muted-foreground">Simple setup</td>
-                    <td className="py-4 px-4 text-center">
-                      <span className="inline-flex items-center gap-1 text-primary font-semibold">
-                        <Check className="w-4 h-4" /> 2 min
-                      </span>
-                    </td>
-                    <td className="py-4 pl-4 text-center text-muted-foreground">Account + sync setup</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       </div>

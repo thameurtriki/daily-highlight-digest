@@ -4,8 +4,8 @@ const steps = [
   {
     number: "01",
     icon: Upload,
-    title: "Upload your highlights",
-    description: "Upload your KoboReader.sqlite file from your Kobo e-reader. We'll extract all your highlights securely.",
+    title: "Connect your Kobo",
+    description: "Plug in your Kobo e-reader and we'll automatically fetch your highlights. No file hunting required.",
   },
   {
     number: "02",

@@ -37,7 +37,7 @@ const Problem = () => {
                 The Solution
               </h3>
               <p className="text-muted-foreground">
-                Daily emails bring your highlights back to life using spaced repetition—the proven method for retention.
+                Daily emails bring your highlights back to life using spaced repetition, the proven method for retention.
               </p>
             </div>
 

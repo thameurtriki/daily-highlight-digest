@@ -62,7 +62,7 @@ const Hero = () => {
                     "The only thing standing between you and your goal is the story you keep telling yourself as to why you can't achieve it."
                   </p>
                   <footer className="mt-4 text-sm text-muted-foreground">
-                    — From your highlights
+                    From your highlights
                   </footer>
                 </blockquote>
               </div>

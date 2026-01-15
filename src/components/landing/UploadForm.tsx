@@ -45,6 +45,20 @@ const UploadForm = () => {
     return null;
   };
 
+  const generateStableId = async (bookId: string, text: string): Promise<string> => {
+    const combined = `${bookId}|${text}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(combined);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  const cleanText = (text: string): string => {
+    if (!text) return '';
+    return text.replace(/\s+/g, ' ').trim();
+  };
+
   const extractHighlights = async (file: File): Promise<Highlight[]> => {
     const SQL = await initSqlJs({
       locateFile: (file) => `https://sql.js.org/dist/${file}`,
@@ -54,18 +68,19 @@ const UploadForm = () => {
     const db: Database = new SQL.Database(new Uint8Array(arrayBuffer));
 
     const query = `
-      SELECT 
-        Bookmark.BookmarkID as id,
-        Bookmark.Text as text,
-        content.Title as book_title,
-        content.Attribution as author,
-        Bookmark.DateCreated as created_at,
-        Bookmark.ContentID as chapter
-      FROM Bookmark
-      LEFT JOIN content ON Bookmark.VolumeID = content.ContentID
-      WHERE Bookmark.Text IS NOT NULL 
-        AND Bookmark.Text != ''
-      ORDER BY Bookmark.DateCreated DESC
+      SELECT
+        b.BookmarkID,
+        b.Text,
+        b.DateCreated,
+        b.VolumeID,
+        c.BookTitle,
+        c.Title,
+        c.Attribution
+      FROM Bookmark b
+      LEFT JOIN content c ON b.VolumeID = c.ContentID
+      WHERE b.Text IS NOT NULL
+        AND TRIM(b.Text) != ''
+      ORDER BY b.VolumeID, b.DateCreated
     `;
 
     const results = db.exec(query);
@@ -75,14 +90,64 @@ const UploadForm = () => {
       return [];
     }
 
-    return results[0].values.map((row) => ({
-      id: String(row[0] || ""),
-      text: String(row[1] || ""),
-      book_title: String(row[2] || "Unknown Book"),
-      author: String(row[3] || "Unknown Author"),
-      created_at: String(row[4] || ""),
-      chapter: String(row[5] || ""),
-    }));
+    const rawHighlights: any[] = [];
+    for (const row of results[0].values) {
+      if (!row[1]) continue;
+
+      rawHighlights.push({
+        text: String(row[1]),
+        bookId: String(row[3] || 'unknown'),
+        bookTitle: String(row[4] || row[5] || 'Unknown Book'),
+        author: String(row[6] || 'Unknown'),
+        createdAt: String(row[2] || '')
+      });
+    }
+
+    // Merge consecutive highlights within 90 seconds
+    const merged: any[] = [];
+    if (rawHighlights.length > 0) {
+      let current = { ...rawHighlights[0] };
+
+      for (let i = 1; i < rawHighlights.length; i++) {
+        const next = rawHighlights[i];
+        const prevDate = new Date(current.createdAt);
+        const currDate = new Date(next.createdAt);
+
+        if (current.bookId === next.bookId &&
+            Math.abs((currDate.getTime() - prevDate.getTime()) / 1000) <= 90) {
+          current.text = current.text + ' ' + next.text;
+        } else {
+          merged.push(current);
+          current = { ...next };
+        }
+      }
+      merged.push(current);
+    }
+
+    // Clean, deduplicate, and generate IDs
+    const highlights: Highlight[] = [];
+    const seenHashes = new Set<string>();
+    const MIN_TEXT_LENGTH = 50;
+
+    for (const h of merged) {
+      const cleanedText = cleanText(h.text);
+      if (!cleanedText || cleanedText.length < MIN_TEXT_LENGTH) continue;
+
+      const hash = await generateStableId(h.bookId, cleanedText);
+      if (seenHashes.has(hash)) continue;
+      seenHashes.add(hash);
+
+      highlights.push({
+        id: hash,
+        text: cleanedText,
+        book_title: h.bookTitle,
+        author: h.author,
+        created_at: h.createdAt,
+        chapter: null as any
+      });
+    }
+
+    return highlights;
   };
 
   const handleSelectFolder = useCallback(async () => {

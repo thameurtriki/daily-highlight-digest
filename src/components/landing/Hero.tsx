@@ -31,7 +31,7 @@ const Hero = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Button variant="hero" size="xl" asChild>
-              <a href="https://dailyhighlights.email">
+              <a href="#get-started">
                 Get Started
                 <Mail className="w-5 h-5 ml-1" />
               </a>
